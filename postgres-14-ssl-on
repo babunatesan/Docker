@@ -1,0 +1,32 @@
+# Dockerfile just add FROM postgresql:14 and save 
+# build the docker image and publish to artifactory
+#using the below yaml file and deploy the postgres
+version: '3.8'
+
+services:
+  postgresql:
+    image: <docker-registry>postgresql:14
+    command: -c 'max_connections=200' -c ssl=on -c ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem -c ssl_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+    hostname: "postgresql"
+    networks:
+      - overlay
+    deploy:
+      endpoint_mode: dnsrr
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=postgres
+volumes:
+  postgresdata:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /root/volumes/postgresdata
+      
+networks:
+  overlay:
+
+
